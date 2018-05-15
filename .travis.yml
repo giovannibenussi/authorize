@@ -7,7 +7,7 @@ before_install: gem install bundler -v 1.16.1
 # CodeClimate Test Reporter
 env:
   global:
-    - CC_TEST_REPORTER_ID=85ec0a91376be74d800a1e40b70953d95e83c102d67489c6db7d31c5d3858e88
+    - CC_TEST_REPORTER_ID=21adedfd934b53e16aeaef7d569a3396c5f80082fb605612665b9478996044aa
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
