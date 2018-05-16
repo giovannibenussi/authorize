@@ -20,10 +20,10 @@ RSpec.describe Authorize do
   end
 
   def execute
-    CustomClass.new.authorize! action
+    CustomClass.new.can? action
   end
 
-  describe '#authorize' do
+  describe '#can?' do
     context 'when the asked action does not exist' do
       let(:action) { :unexisting_action }
 
@@ -36,8 +36,8 @@ RSpec.describe Authorize do
       context 'when the action returns yes' do
         let(:action) { :create }
 
-        it 'does not raise error' do
-          expect { execute }.not_to raise_error
+        it 'returns true' do
+          expect(execute).to eq(true)
         end
       end
 
@@ -45,16 +45,16 @@ RSpec.describe Authorize do
         context 'when the response contains a reason' do
           let(:action) { :update }
 
-          it 'raises a authorize::unauthorized error explaining the reason' do
-            expect { execute }.to raise_error(Authorize::Unauthorized, 'can not perform the update action')
+          it 'returns false' do
+            expect(execute).to eq(false)
           end
         end
 
         context 'when the response does not contain a reason' do
           let(:action) { :delete }
 
-          it 'raises a authorize::unauthorized error without a reason' do
-            expect { execute }.to raise_error(Authorize::Unauthorized, 'can not perform the delete action because a user is not allowed to delete custom classes')
+          it 'returns false' do
+            expect(execute).to eq(false)
           end
         end
       end
