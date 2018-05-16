@@ -10,6 +10,10 @@ RSpec.describe Authorize do
       yes
     end
 
+    def can_update?
+      no
+    end
+
     def can_delete?
       no because: 'a user is not allowed to delete custom classes'
     end
@@ -30,10 +34,20 @@ RSpec.describe Authorize do
       end
 
       context 'when the action returns no' do
-        let(:action) { :delete }
+        context 'when the response contains a reason' do
+          let(:action) { :update }
 
-        it 'raises a Authorize::Unauthorized error' do
-          expect { execute }.to raise_error(Authorize::Unauthorized, 'can not perform the delete action because a user is not allowed to delete custom classes')
+          it 'raises a authorize::unauthorized error explaining the reason' do
+            expect { execute }.to raise_error(Authorize::Unauthorized, 'can not perform the update action')
+          end
+        end
+
+        context 'when the response does not contain a reason' do
+          let(:action) { :delete }
+
+          it 'raises a authorize::unauthorized error without a reason' do
+            expect { execute }.to raise_error(Authorize::Unauthorized, 'can not perform the delete action because a user is not allowed to delete custom classes')
+          end
         end
       end
     end
