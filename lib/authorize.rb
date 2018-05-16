@@ -16,7 +16,7 @@ module Authorize
     method = "can_#{action.to_s.underscore}?"
     raise Authorize::UndefinedAction.new(policy_class_name: policy_class_name, can_method_name: method) unless policy_class.method_defined?(method)
 
-    policy_class.new.send(method, *params)
+    policy_class_instance.send(method, *params)
   end
 
   def can?(action, *params)
@@ -36,6 +36,10 @@ module Authorize
 
   def policy_class
     @_policy_class ||= policy_class_name.safe_constantize || raise(Authorize::UnexistingPolicy, policy_class_name)
+  end
+
+  def policy_class_instance
+    @_policy_class_instance ||= policy_class.new(klass_self: self, klass_name_underscored: klass_name_underscored)
   end
 
   def policy_class_name
