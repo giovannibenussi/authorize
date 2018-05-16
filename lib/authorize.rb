@@ -23,8 +23,8 @@ module Authorize
     is_allowed?(action, *params).can?
   end
 
-  def authorize!(action)
-    response = is_allowed?(action)
+  def authorize!(action, *params)
+    response = is_allowed?(action, *params)
     return true if response.can?
 
     raise Authorize::Unauthorized.new(

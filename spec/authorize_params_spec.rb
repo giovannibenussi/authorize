@@ -34,10 +34,10 @@ RSpec.describe Authorize do
     end
   end
 
-  describe '#can?' do
+  describe '#authorize! params' do
     context 'when the action contains parameters' do
       def execute
-        ParamsSpecClass.new.can? action, 'valid text'
+        ParamsSpecClass.new.authorize! action, 'valid text'
       end
 
       let(:action) { :create }

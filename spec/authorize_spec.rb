@@ -23,7 +23,7 @@ RSpec.describe Authorize do
     CustomClass.new.authorize! action
   end
 
-  describe '#authorize' do
+  describe '#authorize!' do
     context 'when the asked action does not exist' do
       let(:action) { :unexisting_action }
 
