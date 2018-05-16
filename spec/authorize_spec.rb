@@ -24,6 +24,14 @@ RSpec.describe Authorize do
   end
 
   describe '#authorize' do
+    context 'when the asked action does not exist' do
+      let(:action) { :unexisting_action }
+
+      it 'raises a Authorize::UndefinedAction error' do
+        expect { execute }.to raise_error(Authorize::UndefinedAction)
+      end
+    end
+
     context 'when the asked action exists' do
       context 'when the action returns yes' do
         let(:action) { :create }
@@ -49,14 +57,6 @@ RSpec.describe Authorize do
             expect { execute }.to raise_error(Authorize::Unauthorized, 'can not perform the delete action because a user is not allowed to delete custom classes')
           end
         end
-      end
-    end
-
-    context 'when the asked action does not exist' do
-      let(:action) { :unexisting_action }
-
-      it 'raises a Authorize::UndefinedAction error' do
-        expect { execute }.to raise_error(Authorize::UndefinedAction)
       end
     end
   end
