@@ -12,15 +12,15 @@ module Authorize
     receiver.send :include, ActiveModel::AttributeMethods
   end
 
-  def is_allowed?(action)
+  def is_allowed?(action, *params)
     method = "can_#{action.to_s.underscore}?"
     raise Authorize::UndefinedAction.new(policy_class_name: policy_class_name, can_method_name: method) unless policy_class.method_defined?(method)
 
-    policy_class.new.send(method)
+    policy_class.new.send(method, *params)
   end
 
-  def can?(action)
-    is_allowed?(action).can?
+  def can?(action, *params)
+    is_allowed?(action, *params).can?
   end
 
   def authorize!(action)
