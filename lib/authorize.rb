@@ -12,24 +12,31 @@ module Authorize
     receiver.send :include, ActiveModel::AttributeMethods
   end
 
-  def is_allowed?(action, *params)
-    method = "can_#{action.to_s.underscore}?"
+  def is_allowed?(params: [], to:, named_params: {})
+    method = "can_#{to.to_s.underscore}?"
     raise Authorize::UndefinedAction.new(policy_class_name: policy_class_name, can_method_name: method) unless policy_class.method_defined?(method)
 
-    policy_class_instance.send(method, *params)
+    # If named_params is an empty hash, an error is raised
+    # Apparently this is a bug:
+    # https://stackoverflow.com/questions/43024670/passing-an-empty-hash-through-double-splat-in-ruby
+    if named_params.any?
+      policy_class_instance.send(method, *params, **named_params)
+    else
+      policy_class_instance.send(method, *params)
+    end
   end
 
-  def can?(action, *params)
-    is_allowed?(action, *params).can?
+  def can?(*params, to:, **named_params)
+    is_allowed?(params: params, to: to, named_params: named_params).can?
   end
 
-  def authorize!(action, *params)
-    response = is_allowed?(action, *params)
+  def authorize!(*params, to:, **named_params)
+    response = is_allowed?(params: params, to: to, named_params: named_params)
     return true if response.can?
 
     raise Authorize::Unauthorized.new(
       policy_class_name: policy_class_name,
-      action: action,
+      action: to,
       reason: response.reason
     )
   end

@@ -1,12 +1,12 @@
 RSpec.describe Authorize do
   let(:klass) { test_class.new }
 
-  class ParamsSpecClass
+  class AuthorizeParamsSpec
     include Authorize
   end
 
-  class ParamsSpecClassPolicy < Authorize::PolicyBase
-    def can_create?(text)
+  class AuthorizeParamsSpecPolicy < Authorize::PolicyBase
+    def can_create?(text:)
       if text == 'valid text'
         yes
       else
@@ -22,11 +22,14 @@ RSpec.describe Authorize do
       end
     end
 
-    def can_delete?(name, last_name:, upcase: true)
-      full_name = "#{name} #{last_name}"
-      full_name.upcase! if upcase
+    def can_delete?(current_user, last_name:, casecmp: true)
+      equal_last_name = if casecmp
+        current_user.last_name.casecmp?(last_name)
+      else
+        current_user.last_name == last_name
+      end
 
-      if full_name == 'GIOVANNI BENUSSI'
+      if equal_last_name
         yes
       else
         no
@@ -37,7 +40,7 @@ RSpec.describe Authorize do
   describe '#authorize! params' do
     context 'when the action contains parameters' do
       def execute
-        ParamsSpecClass.new.authorize! action, 'valid text'
+        AuthorizeParamsSpec.new.authorize! to: action, text: 'valid text'
       end
 
       let(:action) { :create }
@@ -49,7 +52,7 @@ RSpec.describe Authorize do
 
     context 'when the action contains named parameters' do
       def execute
-        ParamsSpecClass.new.can? action, name: 'giovanni'
+        AuthorizeParamsSpec.new.can? to: action, name: 'giovanni'
       end
 
       let(:action) { :update }
@@ -61,7 +64,8 @@ RSpec.describe Authorize do
 
     context 'when the action contains both parameters and named parameters' do
       def execute
-        ParamsSpecClass.new.can? action, 'giovanni', last_name: 'benussi'
+        current_user = OpenStruct.new(last_name: 'Benussi')
+        AuthorizeParamsSpec.new.can? current_user, to: action, last_name: 'benussi', casecmp: true
       end
 
       let(:action) { :delete }

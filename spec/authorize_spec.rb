@@ -20,7 +20,7 @@ RSpec.describe Authorize do
   end
 
   def execute
-    CustomClass.new.authorize! action
+    CustomClass.new.authorize! to: action
   end
 
   describe '#authorize!' do

@@ -22,7 +22,7 @@ RSpec.describe Authorize do
   describe '#can? metavariables' do
     context 'when the action asks for its class name underscored' do
       def execute
-        Post.new.can? action
+        Post.new.can? to: action
       end
 
       let(:action) { :create }

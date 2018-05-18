@@ -6,8 +6,8 @@ RSpec.describe Authorize do
   end
 
   class ParamsSpecClassPolicy < Authorize::PolicyBase
-    def can_create?(text)
-      if text == 'valid text'
+    def can_create?(user_name)
+      if user_name == 'giovanni'
         yes
       else
         no
@@ -37,7 +37,7 @@ RSpec.describe Authorize do
   describe '#can? params' do
     context 'when the action contains parameters' do
       def execute
-        ParamsSpecClass.new.can? action, 'valid text'
+        ParamsSpecClass.new.can? 'giovanni', to: action
       end
 
       let(:action) { :create }
@@ -49,7 +49,7 @@ RSpec.describe Authorize do
 
     context 'when the action contains named parameters' do
       def execute
-        ParamsSpecClass.new.can? action, name: 'giovanni'
+        ParamsSpecClass.new.can? to: action, name: 'giovanni'
       end
 
       let(:action) { :update }
@@ -61,7 +61,7 @@ RSpec.describe Authorize do
 
     context 'when the action contains both parameters and named parameters' do
       def execute
-        ParamsSpecClass.new.can? action, 'giovanni', last_name: 'benussi'
+        ParamsSpecClass.new.can? 'giovanni', to: action, last_name: 'benussi'
       end
 
       let(:action) { :delete }

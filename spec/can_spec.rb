@@ -20,7 +20,7 @@ RSpec.describe Authorize do
   end
 
   def execute
-    CustomClass.new.can? action
+    CustomClass.new.can? to: action
   end
 
   describe '#can?' do
