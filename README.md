@@ -1,8 +1,63 @@
 # Authorize
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/authorize`. To experiment with that code, run `bin/console` for an interactive prompt.
+Authorize provides a simple authorization scheme for Ruby.
 
-TODO: Delete this and the text above, and describe your gem
+```
+class Post
+  include Authorize
+end
+
+# We have a User class, so we must define a UserPolicy class:
+class PostPolicy
+  def can_create?(current_user)
+    # since the base class is Post, we have the 'post' instance variable:
+    if post.owner == current_user
+      yes
+    else
+      no because: 'user is not the owner of the post'
+    end
+  end
+end
+
+# current_user is the authenticated user
+post.authorize current_user,  to: :edit # true
+post.authorize! current_user, to: :edit # false
+
+post.authorize! current_user, to: :edit
+post.authorize! current_user, to: :edit # raises Authorize::Unauthorized: can not perform the update action because user is not the owner of the post
+```
+
+You can also have policies that doesn't make use of a current user:
+
+```
+class PostPolicy
+  def can_comment?
+    if post.public?
+      yes
+    else
+      no because: 'post is not public'
+    end
+  end
+end
+
+post.authorize! to: :comment
+```
+
+And pass custom parameters to your policy methods:
+
+```
+class PostPolicy
+  def can_create?(another_user, foo:)
+    if another_user.admin? && foo == 'baz'
+      yes
+    else
+      no 'user is not admin or foo is not baz'
+    end
+  end
+end
+
+post.authorize! another_user, to: :create, foo: 'baz'
+```
 
 ## Installation
 
@@ -12,23 +67,9 @@ Add this line to your application's Gemfile:
 gem 'authorize'
 ```
 
-And then execute:
-
-    $ bundle
-
 Or install it yourself as:
 
-    $ gem install authorize
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+    gem install authorize
 
 ## Contributing
 
