@@ -65,6 +65,17 @@ post.authorize! to: :create, foo: 'not-baz'
 # the create action because foo is not baz
 ```
 
+If you need fine-control over the response you could also access to it directly:
+
+```ruby
+response = post.is_allowed? to: :create, foo: 'baz'
+if response.can?
+  post.create!
+else
+  raise 'You are not authorized to create a post because #{response.reason}'
+end
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
