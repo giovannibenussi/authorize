@@ -9,54 +9,60 @@ end
 
 # We have a User class, so we must define a UserPolicy class:
 class PostPolicy
+  def can_create?
+    yes
+  end
+
+  def can_delete?
+    no because: 'posts can not be deleted'
+  end
+end
+
+post.authorize? to: :create # true
+post.authorize? to: :delete # false
+
+post.authorize! to: :create # does nothing
+
+# raises Authorize::Unauthorized: can not perform
+# the delete action because posts can not be deleted
+post.authorize! to: :delete
+```
+
+You can provide custom variables to a method:
+
+```ruby
+class PostPolicy
   def can_create?(current_user)
-    # since the base class is Post, we have the 'post' instance variable:
-    if post.owner == current_user
+    if current_user.admin?
       yes
     else
-      no because: 'user is not the owner of the post'
+      no because: 'user is not admin'
     end
   end
 end
 
-# current_user is the authenticated user
-post.authorize current_user,  to: :edit # true
-post.authorize! current_user, to: :edit # false
-
-post.authorize! current_user, to: :edit
-post.authorize! current_user, to: :edit # raises Authorize::Unauthorized: can not perform the update action because user is not the owner of the post
+post.authorize? admin_user, to: :create # true
+post.authorize? guest_user, to: :create # false
 ```
 
-You can also have policies that doesn't make use of a current user:
+Named parameters are also allowed!
 
 ```ruby
 class PostPolicy
-  def can_comment?
-    if post.public?
+  def can_create?(foo:)
+    if foo == 'baz'
       yes
     else
-      no because: 'post is not public'
+      no because: 'foo is not baz'
     end
   end
 end
 
-post.authorize! to: :comment
-```
+post.authorize! to: :create, foo: 'baz' # true
 
-And pass custom parameters to your policy methods:
-
-```ruby
-class PostPolicy
-  def can_create?(another_user, foo:)
-    if another_user.admin? && foo == 'baz'
-      yes
-    else
-      no 'user is not admin or foo is not baz'
-    end
-  end
-end
-
-post.authorize! another_user, to: :create, foo: 'baz'
+post.authorize! to: :create, foo: 'not-baz'
+# raises Authorize::Unauthorized: can not perform
+# the create action because foo is not baz
 ```
 
 ## Installation
