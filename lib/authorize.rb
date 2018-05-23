@@ -30,6 +30,8 @@ module Authorize
     is_allowed?(params: params, to: to, named_params: named_params).can?
   end
 
+  alias_method :authorize?, :can?
+
   def authorize!(*params, to:, **named_params)
     response = is_allowed?(params: params, to: to, named_params: named_params)
     return true if response.can?
