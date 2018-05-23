@@ -72,7 +72,7 @@ response = post.is_allowed? to: :create, foo: 'baz'
 if response.can?
   post.create!
 else
-  raise 'You are not authorized to create a post because #{response.reason}'
+  raise "You are not authorized to create a post because #{response.reason}"
 end
 ```
 
