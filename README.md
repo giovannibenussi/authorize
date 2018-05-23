@@ -2,7 +2,7 @@
 
 Authorize provides a simple authorization scheme for Ruby.
 
-```
+```ruby
 class Post
   include Authorize
 end
@@ -29,7 +29,7 @@ post.authorize! current_user, to: :edit # raises Authorize::Unauthorized: can no
 
 You can also have policies that doesn't make use of a current user:
 
-```
+```ruby
 class PostPolicy
   def can_comment?
     if post.public?
@@ -45,7 +45,7 @@ post.authorize! to: :comment
 
 And pass custom parameters to your policy methods:
 
-```
+```ruby
 class PostPolicy
   def can_create?(another_user, foo:)
     if another_user.admin? && foo == 'baz'
@@ -69,7 +69,9 @@ gem 'authorize'
 
 Or install it yourself as:
 
-    gem install authorize
+```ruby
+gem install authorize
+```
 
 ## Contributing
 
