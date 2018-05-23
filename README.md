@@ -9,7 +9,7 @@ class Post
   include Authorize
 end
 
-# We have a User class, so we must define a UserPolicy class:
+# We have a Post class, so we must define a PostPolicy class:
 class PostPolicy
   def can_create?
     yes
