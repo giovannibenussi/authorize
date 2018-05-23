@@ -1,4 +1,6 @@
 # Authorize
+<a href="https://codeclimate.com/github/giovannibenussi/authorize/maintainability"><img src="https://api.codeclimate.com/v1/badges/74c424f9bae8388bfdd6/maintainability" /></a>
+[![Build Status](https://travis-ci.org/giovannibenussi/authorize.svg?branch=master)](https://travis-ci.org/giovannibenussi/authorize)
 
 Authorize provides a simple authorization scheme for Ruby.
 
